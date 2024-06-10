@@ -52,31 +52,46 @@ android {
 dependencies {
 
 
-    val nav_version = "2.7.7"
-
-    // Java language implementation
-    implementation("androidx.navigation:navigation-fragment:$nav_version")
-    implementation("androidx.navigation:navigation-ui:$nav_version")
-
-    // Kotlin
-    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
-    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
-
-    // Feature module Support
-    implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
-
-    // Testing Navigation
-    androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
-
-    // Jetpack Compose Integration
-    implementation("androidx.navigation:navigation-compose:$nav_version")
-
-
-    //icon
+//    val nav_version = "2.7.7"
+//
+//    // Java language implementation
+//    implementation("androidx.navigation:navigation-fragment:$nav_version")
+//    implementation("androidx.navigation:navigation-ui:$nav_version")
+//
+//    // Kotlin
+//    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+//    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+//
+//    // Feature module Support
+//    implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
+//
+//    // Testing Navigation
+//    androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
+//
+//    // Jetpack Compose Integration
+//    implementation("androidx.navigation:navigation-compose:$nav_version")
+//
+//
+//    //icon
     implementation ("androidx.compose.material:material-icons-extended:1.6.7")
+//
+//    //Anh tu tren mang
+//    implementation("io.coil-kt:coil-compose:2.1.0")
+//
+//
+//    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+//    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+//    implementation("com.google.android.material:material:1.12.0")
+    //////////////////////////////
 
-    //Anh tu tren mang
-    implementation("io.coil-kt:coil-compose:2.1.0")
+    implementation("com.google.android.material:material:1.12.0")
+
+    // thư viện chuyển màn hình
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

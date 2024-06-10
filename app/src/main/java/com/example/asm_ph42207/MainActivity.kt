@@ -1,5 +1,6 @@
 package com.example.asm_ph42207
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,7 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.asm_ph42207.screen.BottomNavigation
 import com.example.asm_ph42207.screen.Cart
 import com.example.asm_ph42207.screen.CheckOut
-import com.example.asm_ph42207.screen.LoginScreen
+import com.example.asm_ph42207.screen.Login
 import com.example.asm_ph42207.screen.ProductDetail
 import com.example.asm_ph42207.screen.SignUp
 import com.example.asm_ph42207.screen.SplashScreen
@@ -46,7 +47,7 @@ class MainActivity : ComponentActivity() {
                             SplashScreen(navControl)
                         }
                         composable("login") {
-                            LoginScreen(navControl)
+                            Login(navControl)
                         }
                         composable("sign") {
                             SignUp(navControl)

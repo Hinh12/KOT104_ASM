@@ -1,6 +1,7 @@
 package com.example.asm_ph42207.screen
 
 import android.os.Bundle
+import android.util.Patterns
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,235 +10,441 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.toColorInt
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.asm_ph42207.R
+import com.example.asm_ph42207.Screens
+import com.example.asm_ph42207.request.RegisterRequest
+import com.example.asm_ph42207.viewModel.ViewModelAuthenticate
+import kotlinx.coroutines.launch
 
-//class SignUp : AppCompatActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//    }
-//}
 
 @Composable
-fun SignUp(navControl: NavHostController) {
+fun SignUp(navController: NavController) {
+    preview(navController)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun preview(navController: NavController? = null) {
+    getLayout(navController)
+}
+
+@Composable
+private fun getLayout(
+    navController: NavController? = null,
+    viewModelAuth: ViewModelAuthenticate = viewModel()
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val register by viewModelAuth.register
+
     var name by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
-    var confirmPasswordVisible by remember { mutableStateOf(false) }
+    var passwordVisibility by remember { mutableStateOf(false) }
+    var cfPassword by remember { mutableStateOf("") }
+    var cfPasswordVisibility by remember { mutableStateOf(false) }
+    var keyboardCtrl = LocalSoftwareKeyboardController.current
 
+    fun DangKy() {
+        val request = RegisterRequest(email, password, name)
+        viewModelAuth.registerViewModel(request)
+    }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 70.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Divider(
-                color = Color.Gray,
-                thickness = 1.dp,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 30.dp)
-            )
-            Image(
-                painter = painterResource(id = R.drawable.logo_login),
-                contentDescription = "logo",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                    .height(100.dp)
-            )
-            Divider(
-                color = Color.Gray,
-                thickness = 1.dp,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 30.dp)
-            )
-
-
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(
-            text = "Welcome",
-            fontFamily = FontFamily.Serif,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(start = 30.dp, bottom = 20.dp),
-            fontSize = 23.sp,
-            fontWeight = FontWeight.Bold
-
-
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                .shadow(8.dp, shape = RoundedCornerShape(10.dp))
-                .background(Color.White)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text(text = "Name") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Next
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-
-
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = { Text(text = "Email") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Next
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Password") },
-                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done
-                    ),
-                    trailingIcon = {
-                        val image = if (passwordVisible)
-                            painterResource(id = R.drawable.ic_visibility)
-                        else
-                            painterResource(id = R.drawable.ic_visibility_off)
-
-                        IconButton(onClick = {
-                            passwordVisible = !passwordVisible
-                        }) {
-                            Icon(painter = image, contentDescription = if (passwordVisible) "Hide password" else "Show password")
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-
-                OutlinedTextField(
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    label = { Text("Confirm Password") },
-                    visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done
-                    ),
-                    trailingIcon = {
-                        val image = if (confirmPasswordVisible)
-                            painterResource(id = R.drawable.ic_visibility)
-                        else
-                            painterResource(id = R.drawable.ic_visibility_off)
-
-                        IconButton(onClick = {
-                            confirmPasswordVisible = !confirmPasswordVisible
-                        }) {
-                            Icon(painter = image, contentDescription = if (confirmPasswordVisible) "Hide password" else "Show password")
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-
-                Button(onClick = {},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
-                    shape = RoundedCornerShape(8.dp)
-                    ,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xff242424),
-                        contentColor = Color.White
-                    )
-
-                ) {
-                    Text(text = "SIGN UP", modifier = Modifier.padding(10.dp))
+    LaunchedEffect(key1 = register) {
+        if (register != null) {
+            if (register?.status == 200) {
+                navController?.popBackStack()
+            } else {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(register?.message ?: "Đăng ký thất bại")
                 }
-
-                Row(
-
-                ) {
-                    Text(text = "Already have account?",
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                        color = Color(0xff808080)
-                    )
-                    TextButton(onClick = {navControl.popBackStack() },
-                    ) {
-                        Text(text = " SIGN IN", color = Color(0xff303030)
-                            , fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-
-
             }
         }
     }
+
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
+    ) {
+        Column(
+            Modifier
+                .background(color = Color("#E0E0E0".toColorInt()))
+                .fillMaxSize()
+                .background(color = Color.White)
+                .padding(it)
+
+        ) {
+
+            Spacer(modifier = Modifier.height(80.dp))
+
+            thanhNgangIcon()
+
+            Text(
+                text = "WELCOME",
+                fontFamily = FontFamily(Font(R.font.merriweather_regular)),
+                fontSize = 24.sp,
+                fontWeight = FontWeight(700),
+                modifier = Modifier
+                    .padding(20.dp)
+            )
+
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .background(Color.White)
+                    .fillMaxWidth(0.9f)
+                    .fillMaxHeight(0.9f)
+                    .shadow(
+                        elevation = 10.dp,
+                        spotColor = Color("#f4f5f6".toColorInt()),
+                    )
+            ) {
+                Column {
+
+                    // nhập tên
+                    Text(
+                        text = "Name",
+                        color = Color("#909090".toColorInt()),
+                        fontFamily = FontFamily(Font(R.font.nunitosans_regular)),
+                        fontWeight = FontWeight(400),
+                        fontSize = 14.sp,
+                    )
+
+                    TextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        modifier = Modifier.fillMaxWidth(0.8f),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                            unfocusedIndicatorColor = Color("#E0E0E0".toColorInt()),
+                            focusedIndicatorColor = Color.Gray
+                        ),
+                        singleLine = true,
+                        trailingIcon = {
+                            if (name.isNotEmpty()) {
+                                IconButton(onClick = { name = "" }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Clear,
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .height(20.dp)
+                                            .width(20.dp)
+                                    )
+                                }
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    //nhập email
+                    Text(
+                        text = "Email",
+                        color = Color("#909090".toColorInt()),
+                        fontFamily = FontFamily(Font(R.font.nunitosans_regular)),
+                        fontWeight = FontWeight(400),
+                        fontSize = 14.sp,
+                    )
+
+                    TextField(
+                        value = email,
+                        onValueChange = { email = it },
+                        modifier = Modifier.fillMaxWidth(0.8f),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                            unfocusedIndicatorColor = Color("#E0E0E0".toColorInt()),
+                            focusedIndicatorColor = Color.Gray
+                        ),
+                        singleLine = true,
+                        trailingIcon = {
+                            if (email.isNotEmpty()) {
+                                IconButton(onClick = { email = "" }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Clear,
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .height(20.dp)
+                                            .width(20.dp)
+                                    )
+                                }
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    // nhập password
+                    Text(
+                        text = "Password",
+                        color = Color("#909090".toColorInt()),
+                        fontFamily = FontFamily(Font(R.font.nunitosans_regular)),
+                        fontWeight = FontWeight(400),
+                        fontSize = 14.sp,
+                    )
+
+                    TextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                            unfocusedIndicatorColor = Color("#E0E0E0".toColorInt()),
+                            focusedIndicatorColor = Color.Gray
+                        ),
+                        visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Next
+                        ),
+                        trailingIcon = {
+                            IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                                Image(
+                                    painter = painterResource(id = if (passwordVisibility) R.drawable.eye_slash_icon else R.drawable.eye_icon),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .height(20.dp)
+                                        .width(20.dp)
+                                )
+                            }
+                        },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(0.8f),
+                    )
+
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    // nhập lại password
+                    Text(
+                        text = "Confirm Password",
+                        color = Color("#909090".toColorInt()),
+                        fontFamily = FontFamily(Font(R.font.nunitosans_regular)),
+                        fontWeight = FontWeight(400),
+                        fontSize = 14.sp,
+                    )
+
+                    TextField(
+                        value = cfPassword,
+                        onValueChange = { cfPassword = it },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                            unfocusedIndicatorColor = Color("#E0E0E0".toColorInt()),
+                            focusedIndicatorColor = Color.Gray
+                        ),
+                        visualTransformation = if (cfPasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done
+                        ),
+                        trailingIcon = {
+                            IconButton(onClick = { cfPasswordVisibility = !cfPasswordVisibility }) {
+                                Image(
+                                    painter = painterResource(id = if (cfPasswordVisibility) R.drawable.eye_slash_icon else R.drawable.eye_icon),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .height(20.dp)
+                                        .width(20.dp)
+                                )
+                            }
+                        },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(0.8f),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                keyboardCtrl?.hide()
+                                if (name.isBlank() || email.isBlank() || password.isBlank() || cfPassword.isBlank()) {
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar("Không được để trống")
+                                    }
+                                } else if (email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(
+                                        email
+                                    ).matches()
+                                ) {
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar("Email không hợp lệ")
+                                    }
+
+                                } else if (password != cfPassword) {
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar("Nhập lại mật khẩu sai")
+                                    }
+                                } else {
+                                    DangKy()
+                                }
+                            })
+                    )
+
+                }
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                // nút đăng ký
+                Button(
+                    onClick = {
+                        if (name.isBlank() || email.isBlank() || password.isBlank() || cfPassword.isBlank()) {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Không được để trống")
+                            }
+                        } else if (email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(
+                                email
+                            ).matches()
+                        ) {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Email không hợp lệ")
+                            }
+
+                        } else if (password != cfPassword) {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Nhập lại mật khẩu sai")
+                            }
+                        } else {
+                            DangKy()
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        Color("#242424".toColorInt())
+                    ),
+                    modifier = Modifier
+                        .background(
+                            Color("#242424".toColorInt()),
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .height(50.dp)
+                        .width(285.dp)
+                ) {
+                    Text(
+                        text = "SIGN UP",
+                        fontWeight = FontWeight(600),
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.nunitosans_regular)),
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                chuyenSangDangNhap(navController)
+            }
+        }
+    }
+}
+
+@Composable
+private fun thanhNgangIcon() {
+    Row(
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+
+        Spacer(
+            modifier = Modifier
+                .height(1.dp)
+                .background(Color("#BDBDBD".toColorInt()))
+                .width(105.dp)
+        )
+
+        sofaIcon()
+
+        Spacer(
+            modifier = Modifier
+                .height(1.dp)
+                .background(Color("#BDBDBD".toColorInt()))
+                .width(105.dp)
+        )
+    }
+}
+
+@Composable
+private fun chuyenSangDangNhap(navController: NavController? = null) {
+
+    TextButton(onClick = {
+        navController?.navigate(Screens.Login.screens)
+    }) {
+        Row {
+            Text(
+                text = "Already have account? ",
+                fontFamily = FontFamily(Font(R.font.nunitosans_regular)),
+                fontWeight = FontWeight(600),
+                fontSize = 14.sp,
+                color = Color("#808080".toColorInt()),
+            )
+
+            Text(
+                text = "SIGN IN",
+                fontFamily = FontFamily(Font(R.font.nunitosans_regular)),
+                fontWeight = FontWeight(700),
+                fontSize = 14.sp,
+                color = Color("#303030".toColorInt()),
+            )
+
+        }
+    }
+
 }

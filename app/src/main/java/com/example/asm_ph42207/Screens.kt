@@ -6,9 +6,11 @@ sealed class Screens(val screens: String) {
     data object Notification : Screens("notification")
     data object Profile : Screens("profile")
     data object Thongbaott : Screens("thongbaott")
-    data object MyBottomAppBar : Screens("MyBottombar")
+    data object MyBottombar : Screens("MyBottombar")
     data object Favorite : Screens("favorite")
     data object Cart : Screens("cart")
+    data object Login : Screens("login")
+    data object SignUp : Screens("sign")
     data object CheckOut : Screens("thanhtoan")
     data object ProductDetail : Screens("productDetail")
 }
