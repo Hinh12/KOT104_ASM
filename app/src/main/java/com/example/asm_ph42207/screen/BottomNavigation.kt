@@ -167,7 +167,6 @@ fun MyBottomAppBar(navControl: NavHostController) {
             composable(Screens.Notification.screens){ Notification() }
             composable(Screens.Profile.screens){ Profile() }
             composable(Screens.Cart.screens){ Cart() }
-            composable(Screens.ProductDetail.screens){ ProductDetail() }
             composable(Screens.Thongbaott.screens){ Thongbaott() }
             composable(Screens.CheckOut.screens){ CheckOut() }
             composable(Screens.Favorite.screens){ Favorite() }

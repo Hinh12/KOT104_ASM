@@ -14,9 +14,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.asm_ph42207.screen.BottomNavigation
 import com.example.asm_ph42207.screen.Cart
 import com.example.asm_ph42207.screen.CheckOut
@@ -65,8 +67,14 @@ class MainActivity : ComponentActivity() {
                         composable("home") {
                             BottomNavigation(navControl)
                         }
-                        composable(Screens.ProductDetail.screens) {
-                            ProductDetail(navControl)
+                        composable(
+                            "${Screens.ProductDetail.screens}/{productID}",
+                            arguments = listOf(navArgument("productID") { type = NavType.StringType })
+                        ) {
+                            ProductDetail(
+                                productId = it.arguments?.getString("productID").orEmpty(),
+                                navController = navControl
+                            )
                         }
 
 
